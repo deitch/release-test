@@ -1,36 +1,26 @@
-name: Continuous Integration
+name: Release
 on:
-  pull_request:
-    types: [opened, synchronize, reopened]
   push:
-    branches:
-    - master
+    tags:
+    - 'v*'
+  create:
+    tags:
+    - 'v*'
 
 jobs:
-  report:
-    name: Report
-    runs-on: ubuntu-latest
-    steps:
-    - name: ref
-      run: echo ${{ github.ref }}
-    - name: event_name
-      run: echo ${{ github.event_name }}
-  build:
-    name: Build
+  release:
+    name: Release
     runs-on: ubuntu-latest
     steps:
     - name: checkout
       uses: actions/checkout@v2
     - name: release tag
-      if: (github.event_name == 'create' || github.event_name == 'push')  && startsWith(github.ref,'refs/tags/')
       id: release_tag
       run: echo ::set-output name=SOURCE_TAG::${GITHUB_REF#refs/tags/}
     - name: release template
-      if: (github.event_name == 'create' || github.event_name == 'push')  && startsWith(github.ref,'refs/tags/')
       run: cat deploy/template/deployment.yaml | sed 's/RELEASE_TAG/'${{ steps.release_tag.outputs.SOURCE_TAG }}'/g' > /tmp/deployment.yaml
     - name: Create Release
       id: create_release
-      if: (github.event_name == 'create' || github.event_name == 'push')  && startsWith(github.ref,'refs/tags/')
       uses: actions/create-release@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
@@ -41,7 +31,6 @@ jobs:
         prerelease: false
     - name: Upload Release Asset
       id: upload-release-asset
-      if: (github.event_name == 'create' || github.event_name == 'push')  && startsWith(github.ref,'refs/tags/')
       uses: actions/upload-release-asset@v1
       env:
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
