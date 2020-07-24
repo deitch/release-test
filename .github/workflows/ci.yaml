@@ -5,6 +5,9 @@ on:
  push:
    branches:
      - master
+  push:
+    tags:
+    - 'v*'
 
 jobs:
   report:
