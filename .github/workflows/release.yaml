@@ -19,6 +19,7 @@ jobs:
     - name: Set up Docker Buildx
       uses: docker/setup-buildx-action@v1
     - name: tagname
+      id: tagname
       run: |
         echo running on tag ${GITHUB_REF#refs\/tags/}
         echo ::set-output name=tag::${GITHUB_REF#refs\/tags/}
@@ -42,7 +43,12 @@ jobs:
     - name: Echo tag name
       run: echo running on tag ${GITHUB_REF#refs\/tags/}
     - name: tagname
-      run: echo ::set-output name=tag::${GITHUB_REF/refs\/tags\//}
+      id: tagname
+      run: |
+        echo running on tag ${GITHUB_REF#refs\/tags/}
+        echo ::set-output name=tag::${GITHUB_REF#refs\/tags/}
+    - name: Report set tagname
+      run: echo tagname is ${{ steps.tagname.outputs.tag }}
     - name: release template
       run: cat deploy/template/deployment.yaml | sed 's/RELEASE_TAG/'${{ steps.tagname.outputs.tag }}'/g' > /tmp/deployment.yaml
     - name: Create Release
