@@ -22,6 +22,8 @@ jobs:
       run: echo running on tag ${GITHUB_REF#refs\/tags/}
     - name: tagname
       run: echo ::set-output name=tag::${GITHUB_REF#refs\/tags/}
+    - name: Report set tagname
+      run: echo tagname is ${{ steps.tagname.outputs.tag }}
     - name: Build
       id: docker_build
       uses: docker/build-push-action@v2
