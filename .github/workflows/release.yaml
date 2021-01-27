@@ -27,7 +27,9 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         platforms: linux/amd64,linux/arm64
-        tags: ${{ format('{0}:{1}', env.IMAGE_NAME, steps.tagname.outputs.tag) }} ${{ format('{0}:{1}', env.IMAGE_NAME, 'latest') }}
+        tags: |
+          ${{ format('{0}:{1}', env.IMAGE_NAME, steps.tagname.outputs.tag) }}
+          ${{ format('{0}:{1}', env.IMAGE_NAME, 'latest') }}
 
   release: # create a github actions release with necessary artifacts
     name: Release
