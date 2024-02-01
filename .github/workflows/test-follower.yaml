@@ -1,0 +1,20 @@
+name: call test follower
+on:
+  workflow_run:
+    workflows: ["call multi-repo artifact test command"]
+    types: 
+      - completed
+
+jobs:
+  report-run-id:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Report Run ID
+        run: echo "Run ID is ${{ github.event.workflow_run.id }}"
+
+  remote_job:
+    uses: deitch/actions-test/.github/workflows/test.yml@master
+    with:
+      image: test/tag:12345
+      artifact_name: test-tag
+      artifact_run_id: ${{ github.event.workflow_run.id }}
