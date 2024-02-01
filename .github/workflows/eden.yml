@@ -35,7 +35,7 @@ jobs:
             path: /tmp/test-tag.tar
     test_suite_pr:
       needs: build
-      uses: deitch/release-test/.github/workflows/test.yml@master
+      uses: deitch/actions-test/.github/workflows/test.yml@master
       with:
         image: test/tag:12345
         artifact_name: test-tag
