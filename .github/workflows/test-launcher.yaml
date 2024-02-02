@@ -1,7 +1,11 @@
 name: call multi-repo artifact test command
 on:
   workflow_dispatch:
-
+  pull_request:
+    branches:
+      - "master"
+      - "main"
+  
 jobs:
     build:
         runs-on: ubuntu-latest
