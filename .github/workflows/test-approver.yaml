@@ -1,4 +1,4 @@
-name: call test follower
+name: call test approver
 on:
     push:
       branches:
@@ -18,16 +18,18 @@ jobs:
             uses: actions/github-script@v7
             with:
               script: |
-                console.log(toJSON(context.payload));
-                  const { data } = await github.rest.actions.listWorkflowRuns({
-                      owner: context.repo.owner,
-                      repo: context.repo.repo,
-                      workflow_id: 'test-launcher.yml',
-                      head_sha: context.payload.pull_request_review.pull_request.head.sha,
-                      status: 'success'
-                  });
-                  const runId = data.workflow_runs[0].id; // Assuming the first one is the latest successful run
-                  return runId;
+                const { data } = await github.rest.actions.listWorkflowRuns({
+                    owner: context.repo.owner,
+                    repo: context.repo.repo,
+                    workflow_id: 'test-launcher.yaml',
+                    head_sha: context.payload.pull_request.head.sha,
+                    status: 'success'
+                });
+                if (data == null || data.workflow_runs.length == 0) {
+                    throw new Error('No successful runs found');
+                }
+                const runId = data.workflow_runs[0].id; // Assuming the first one is the latest successful run
+                return runId;
               result-encoding: string
             env:
               GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
